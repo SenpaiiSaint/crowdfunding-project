@@ -11,19 +11,31 @@ interface Campaign {
   raised: number;
 }
 
-export default function CampaignPage({ params }: { params: { id: string } }) {
+export default function CampaignPage({ params }: { params: Promise<{ id: string }> }) {
+  // State to hold the resolved params from the promise
+  const [resolvedParams, setResolvedParams] = useState<{ id: string } | null>(null);
+  // State to hold the campaign data
   const [campaign, setCampaign] = useState<Campaign | null>(null);
 
+  // Resolve the params promise once when the component mounts
   useEffect(() => {
-    fetch("/api/campaigns")
-      .then((res) => res.json())
-      .then((campaigns: Campaign[]) => {
-        const found = campaigns.find((c) => c.id === params.id);
-        setCampaign(found ?? null);
-      });
-  }, [params.id]);
+    params.then((p) => setResolvedParams(p));
+  }, [params]);
 
-  if (!campaign)
+  // Fetch campaign data once the resolved params are available
+  useEffect(() => {
+    if (resolvedParams) {
+      fetch("/api/campaigns")
+        .then((res) => res.json())
+        .then((campaigns: Campaign[]) => {
+          const found = campaigns.find((c) => c.id === resolvedParams.id);
+          setCampaign(found ?? null);
+        });
+    }
+  }, [resolvedParams]);
+
+  // Show a loading state until both the resolved params and campaign are ready
+  if (!resolvedParams || !campaign)
     return (
       <motion.div
         className="p-8"
