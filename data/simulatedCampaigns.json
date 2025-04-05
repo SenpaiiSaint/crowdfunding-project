@@ -1,0 +1,16 @@
+[
+  {
+    "id": "1",
+    "title": "Solar Power for Schools",
+    "description": "Help install solar panels in local schools.",
+    "goal": 5000,
+    "raised": 3200
+  },
+  {
+    "id": "2",
+    "title": "Community Garden",
+    "description": "Support the creation of a community garden.",
+    "goal": 3000,
+    "raised": 1800
+  }
+]
